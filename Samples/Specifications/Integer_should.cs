@@ -1,5 +1,6 @@
 using System.Collections;
 using NUnit.Framework;
+using NUnit.Framework.Internal.Filters;
 
 namespace Samples.Specifications
 {
@@ -19,6 +20,7 @@ namespace Samples.Specifications
                 yield return new TestCaseData(12, 3).Returns(4);
                 yield return new TestCaseData(12, 2).Returns(6);
                 yield return new TestCaseData(12, 4).Returns(3);
+
             }
         }
     }
