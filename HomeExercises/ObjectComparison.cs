@@ -22,7 +22,18 @@ namespace HomeExercises
                Логику AreEqual разумнее поместить в Person, и использовать Assert.Equals(),
                чтобы тест не падал, если логика изменится*/
             Assert.True(AreEqual(actualTsar, expectedTsar));
+        }
 
+        [Test]
+        public void CheckCurrentTsar()
+        {
+            var actualTsar = TsarRegistry.GetCurrentTsar();
+            var expectedTsar = new Person("Ivan IV The Terrible", 54, 170, 70,
+                new Person("Vasili III of Russia", 28, 170, 60, null));
+            // Не знаю как отформатировать эту строчку чтобы красиво смотрелась
+           actualTsar.ShouldBeEquivalentTo(
+               expectedTsar, options => options.Excluding(
+                   x => x.SelectedMemberInfo.DeclaringType == typeof(Person) && x.SelectedMemberInfo.Name == "Id"));
         }
 
         private bool AreEqual(Person actual, Person expected)
@@ -35,52 +46,6 @@ namespace HomeExercises
             && actual.Height == expected.Height
             && actual.Weight == expected.Weight
             && AreEqual(actual.Parent, expected.Parent);
-        }
-    }
-    public class Tsar_Should
-    {
-        public static Person ActualTsar;
-        public static Person ExpectedTsar;
-
-        [Test, TestCaseSource(nameof(HasSameCharacteristics))]
-        public void IsSame(object expected, object actual)
-        {
-            expected.Should().Be(actual);
-        }
-
-        public static IEnumerable HasSameCharacteristics
-        {
-            get
-            {
-                var actualTsar = TsarRegistry.GetCurrentTsar();
-                var expectedTsar = new Person("Ivan IV The Terrible", 54, 170, 70,
-                    new Person("Vasili III of Russia", 28, 170, 60, null));
-                yield return
-                    Generate_IsSame_CaseData("HasSameName", actualTsar.Name, expectedTsar.Name);
-                yield return
-                    Generate_IsSame_CaseData("HasSameAge", actualTsar.Age, expectedTsar.Age);
-                yield return
-                    Generate_IsSame_CaseData("HasSameHeight", actualTsar.Height, expectedTsar.Height);
-                yield return
-                    Generate_IsSame_CaseData("HasSameWeight", actualTsar.Weight, expectedTsar.Weight);
-                yield return
-                    Generate_IsSame_CaseData("HasSameParent'sName", expectedTsar.Parent.Name, actualTsar.Parent.Name);
-                yield return
-                    Generate_IsSame_CaseData("HasSameParent'sAge", expectedTsar.Parent.Age, actualTsar.Parent.Age);
-                yield return
-                    Generate_IsSame_CaseData("HasSameParent'sHeight", expectedTsar.Parent.Height, actualTsar.Parent.Height);
-                //Add missing test
-                yield return
-                    Generate_IsSame_CaseData("HasSameParent'sHeight", expectedTsar.Parent.Weight, actualTsar.Parent.Weight);
-                //This test is bad, it falls when two objects have the same values of Person.Parent.Parent but different references on it
-                yield return
-                    Generate_IsSame_CaseData("HasSameGrandfather", expectedTsar.Parent.Parent, actualTsar.Parent.Parent);
-            }
-        }
-
-        public static TestCaseData Generate_IsSame_CaseData(string name, params object[] args)
-        {
-            return new TestCaseData(args) { TestName = name };
         }
     }
 

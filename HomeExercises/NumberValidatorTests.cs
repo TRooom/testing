@@ -5,29 +5,35 @@ using NUnit.Framework;
 
 namespace HomeExercises
 {
-	public class NumberValidatorTests
+	public class NumberValidator_Should
 	{
-		[Test]
-		public void Test()
-		{
-			Assert.Throws<ArgumentException>(() => new NumberValidator(-1, 2, true));
-			Assert.DoesNotThrow(() => new NumberValidator(1, 0, true));
-			Assert.Throws<ArgumentException>(() => new NumberValidator(-1, 2, false));
-			Assert.DoesNotThrow(() => new NumberValidator(1, 0, true));
+        [TestCase("0",1,TestName = "ReturnTrue_ForZero",ExpectedResult = true)]
+        [TestCase("1", 1, TestName = "ReturnTrue_ForPositiveNumberWithoutSign", ExpectedResult = true)]
+        [TestCase("-1", 2, TestName = "ReturnTrue_ForNegative", ExpectedResult = true)]
+        [TestCase("1.1", 2, 1, TestName = "ReturnTrue_ForFract", ExpectedResult = true)]
+        [TestCase("00", 2, TestName = "ReturnTrue_ForDoubleZero", ExpectedResult = true)]
+        [TestCase("+1", 2, TestName = "ReturnTrue_ForCorrectNumerWhithPositiveSign", ExpectedResult = true)]
+        [TestCase("0,1", 2, 1, TestName = "ReturnTrue_ForDotDelimiter", ExpectedResult = true)]
+        [TestCase("0.1", 2, 1, TestName = "ReturnTrue_ForCommaDelimiter", ExpectedResult = true)]
+        [TestCase("11", 2, 0, true, TestName = "ReturnTrue_ForPositive_WhenOnlyPositiveTrue", ExpectedResult = true)]
+        [TestCase("11", 1, TestName = "ReturnFalse_WhenNumbersCountMoreThenPrecision", ExpectedResult = false)]
+        [TestCase("1.11", 2,1, TestName = "ReturnFalse_WhenFractNumbersCountMoreThenScale", ExpectedResult = false)]
+        [TestCase("a", 1, TestName = "ReturnFalse_WhenValueContainsNonNumber", ExpectedResult = false)]
+        [TestCase("11", 1, 0, TestName = "ReturnFalse_WhenNumbersCountMoreThenPrecision", ExpectedResult = false)]
+        [TestCase("-1", 1, 0, true, TestName = "ReturnFalse_ForNegative_WhenOnlyPositiveTrue", ExpectedResult = false)]
+        public bool Check(string value, int precision, int scale = 0, bool onlyPositive = false)
+	    {
+	        return  new NumberValidator(precision,scale,onlyPositive).IsValidNumber(value);
+	    }
 
-			Assert.IsTrue(new NumberValidator(17, 2, true).IsValidNumber("0.0"));
-			Assert.IsTrue(new NumberValidator(17, 2, true).IsValidNumber("0"));
-			Assert.IsTrue(new NumberValidator(17, 2, true).IsValidNumber("0.0"));
-			Assert.IsFalse(new NumberValidator(3, 2, true).IsValidNumber("00.00"));
-			Assert.IsFalse(new NumberValidator(3, 2, true).IsValidNumber("-0.00"));
-			Assert.IsTrue(new NumberValidator(17, 2, true).IsValidNumber("0.0"));
-			Assert.IsFalse(new NumberValidator(3, 2, true).IsValidNumber("+0.00"));
-			Assert.IsTrue(new NumberValidator(4, 2, true).IsValidNumber("+1.23"));
-			Assert.IsFalse(new NumberValidator(3, 2, true).IsValidNumber("+1.23"));
-			Assert.IsFalse(new NumberValidator(17, 2, true).IsValidNumber("0.000"));
-			Assert.IsFalse(new NumberValidator(3, 2, true).IsValidNumber("-1.23"));
-			Assert.IsFalse(new NumberValidator(3, 2, true).IsValidNumber("a.sd"));
-		}
+        [TestCase(-1,0, TestName = "Throw_WhenPrecisionIsNegative")]
+        [TestCase(1, -1, TestName = "Throw_WhenScaleIsNegative")]
+        [TestCase(1, 2, TestName = "Throw_WhenScaleMoreThenPrecision")]
+        public void Check(int precision, int scale)
+	    {
+	        Action act = () => new NumberValidator(precision,scale);
+	        act.ShouldThrow<ArgumentException>();
+	    }
 	}
 
 	public class NumberValidator
