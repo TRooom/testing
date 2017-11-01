@@ -30,10 +30,10 @@ namespace HomeExercises
             var actualTsar = TsarRegistry.GetCurrentTsar();
             var expectedTsar = new Person("Ivan IV The Terrible", 54, 170, 70,
                 new Person("Vasili III of Russia", 28, 170, 60, null));
-            // Не знаю как отформатировать эту строчку чтобы красиво смотрелась
            actualTsar.ShouldBeEquivalentTo(
                expectedTsar, options => options.Excluding(
-                   x => x.SelectedMemberInfo.DeclaringType == typeof(Person) && x.SelectedMemberInfo.Name == "Id"));
+                   x => x.SelectedMemberInfo.DeclaringType == typeof(Person) && 
+                        x.SelectedMemberInfo.Name == "Id"));
         }
 
         private bool AreEqual(Person actual, Person expected)
