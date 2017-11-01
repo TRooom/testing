@@ -7,32 +7,35 @@ namespace HomeExercises
 {
 	public class NumberValidator_Should
 	{
-        [TestCase("0",1,TestName = "ReturnTrue_ForZero",ExpectedResult = true)]
-        [TestCase("1", 1, TestName = "ReturnTrue_ForPositiveNumberWithoutSign", ExpectedResult = true)]
-        [TestCase("-1", 2, TestName = "ReturnTrue_ForNegative", ExpectedResult = true)]
-        [TestCase("1.1", 2, 1, TestName = "ReturnTrue_ForFract", ExpectedResult = true)]
-        [TestCase("00", 2, TestName = "ReturnTrue_ForDoubleZero", ExpectedResult = true)]
-        [TestCase("+1", 2, TestName = "ReturnTrue_ForCorrectNumerWhithPositiveSign", ExpectedResult = true)]
-        [TestCase("0,1", 2, 1, TestName = "ReturnTrue_ForDotDelimiter", ExpectedResult = true)]
-        [TestCase("0.1", 2, 1, TestName = "ReturnTrue_ForCommaDelimiter", ExpectedResult = true)]
-        [TestCase("11", 2, 0, true, TestName = "ReturnTrue_ForPositive_WhenOnlyPositiveTrue", ExpectedResult = true)]
-        [TestCase("11", 1, TestName = "ReturnFalse_WhenNumbersCountMoreThenPrecision", ExpectedResult = false)]
-        [TestCase("1.11", 2,1, TestName = "ReturnFalse_WhenFractNumbersCountMoreThenScale", ExpectedResult = false)]
-        [TestCase("a", 1, TestName = "ReturnFalse_WhenValueContainsNonNumber", ExpectedResult = false)]
-        [TestCase("11", 1, 0, TestName = "ReturnFalse_WhenNumbersCountMoreThenPrecision", ExpectedResult = false)]
-        [TestCase("-1", 1, 0, true, TestName = "ReturnFalse_ForNegative_WhenOnlyPositiveTrue", ExpectedResult = false)]
-        public bool Check(string value, int precision, int scale = 0, bool onlyPositive = false)
+	    [TestCase("0", 1, TestName = "ForZero_ReturnTrue")]
+	    [TestCase("1", 1, TestName = "ForPositiveNumberWithoutSign_ReturnTrue")]
+	    [TestCase("-1", 2, TestName = "ForNegative_ReturnTrue")]
+	    [TestCase("1.1", 2, 1, TestName = "ForFract_ReturnTrue")]
+	    [TestCase("00", 2, TestName = "ForDoubleZero_ReturnTrue")]
+	    [TestCase("+1", 2, TestName = "ForCorrectNumerWithPositiveSign_ReturnTrue")]
+	    [TestCase("0,1", 2, 1, TestName = "ForDotDelimiter_ReturnTrue")]
+	    [TestCase("0.1", 2, 1, TestName = "ForCommaDelimiter_ReturnTrue")]
+	    [TestCase("11", 2, 0, true, TestName = "ForPositive_WhenOnlyPositiveIsTrue_ReturnTrue")]
+	    public void CheckValidNubmers(string value, int precision, int scale = 0, bool onlyPositive = false)
+        {
+	        new NumberValidator(precision, scale, onlyPositive).IsValidNumber(value).Should().BeTrue();
+        }
+        [TestCase("11", 1, TestName = "ForNumber_WhenNumbersCountMoreThenPrecision_ReturnFalse")]
+        [TestCase("1.11", 2,1, TestName = "ForNumber_WhenFractNumbersCountMoreThenScale_ReturnFalse")]
+        [TestCase("a", 1, TestName = "ForNonNumber_ReturnFalse")]
+        [TestCase("-1", 1, 0, true, TestName = "ForNegative_WhenOnlyPositiveIsTrue_ReturnFalse")]
+        public void CheckInvalidNumber(string value, int precision, int scale = 0, bool onlyPositive = false)
 	    {
-	        return  new NumberValidator(precision,scale,onlyPositive).IsValidNumber(value);
+	        new NumberValidator(precision,scale,onlyPositive).IsValidNumber(value).Should().BeFalse();
 	    }
 
-        [TestCase(-1,0, TestName = "Throw_WhenPrecisionIsNegative")]
-        [TestCase(1, -1, TestName = "Throw_WhenScaleIsNegative")]
-        [TestCase(1, 2, TestName = "Throw_WhenScaleMoreThenPrecision")]
-        public void Check(int precision, int scale)
+        [TestCase(-1,0, "precision must be a positive number", TestName = "ForNegativePrecision_Throw")]
+        [TestCase(1, -1, "scale must be a non-negative number less or equal than precision", TestName = "ForNegativeScale_Throw")]
+        [TestCase(1, 2, "scale must be a non-negative number less or equal than precision", TestName = "ForPositiveScaleAndPresition_WhenScaleMoreThanPrecision_Throw")]
+        public void CheckThrow(int precision, int scale, string message)
 	    {
 	        Action act = () => new NumberValidator(precision,scale);
-	        act.ShouldThrow<ArgumentException>();
+	        act.ShouldThrow<ArgumentException>().Which.Message.Should().Be(message);
 	    }
 	}
 
