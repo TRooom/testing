@@ -29,19 +29,19 @@ namespace HomeExercises
 	        new NumberValidator(precision,scale,onlyPositive).IsValidNumber(value).Should().BeFalse();
 	    }
 
-        [TestCase(-1,0, "precision must be a positive number", TestName = "ForNegativePrecision_Throw")]
-        [TestCase(1, -1, "scale must be a non-negative number less or equal than precision", TestName = "ForNegativeScale_Throw")]
-        [TestCase(1, 2, "scale must be a non-negative number less or equal than precision", TestName = "ForPositiveScaleAndPresition_WhenScaleMoreThanPrecision_Throw")]
-        public void CheckThrow(int precision, int scale, string message)
+        [TestCase(-1,0, TestName = "ForNegativePrecision_Throw")]
+        [TestCase(1, -1, TestName = "ForNegativeScale_Throw")]
+        [TestCase(1, 2, TestName = "ForPositiveScaleAndPresition_WhenScaleMoreThanPrecision_Throw")]
+        public void CheckThrow(int precision, int scale)
 	    {
 	        Action act = () => new NumberValidator(precision,scale);
-	        act.ShouldThrow<ArgumentException>().Which.Message.Should().Be(message);
+	        act.ShouldThrow<ArgumentException>();
 	    }
 
 	    [TestCase(-1, 0, "precision must be a positive number", TestName = "ForNegativePrecision_ThrowCorrectMessage")]
 	    [TestCase(1, -1, "scale must be a non-negative number less or equal than precision", TestName = "ForNegativeScale_ThrowCorrectMessage")]
 	    [TestCase(1, 2, "scale must be a non-negative number less or equal than precision", TestName = "ForPositiveScaleAndPresition_WhenScaleMoreThanPrecision_ThrowCorrectMessage")]
-	    public void CheckThrowMessage(int precision, int scale, string message)
+	    public void CheckThrowWithMessage(int precision, int scale, string message)
 	    {
 	        Action act = () => new NumberValidator(precision, scale);
 	        act.ShouldThrow<ArgumentException>().Which.Message.Should().Be(message);
