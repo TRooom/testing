@@ -33,7 +33,7 @@ namespace HomeExercises
            actualTsar.ShouldBeEquivalentTo(
                expectedTsar, options => options.Excluding(
                    x => x.SelectedMemberInfo.DeclaringType == typeof(Person) && 
-                        x.SelectedMemberInfo.Name == "Id"));
+                        x.SelectedMemberInfo.Name == nameof(Person.Id)));
         }
 
         private bool AreEqual(Person actual, Person expected)
